@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#f7f8f5" name="theme-color"/>
+<meta content="{{meta_description}}" name="description"/>
+<meta content="website" property="og:type"/>
+<meta content="{{meta_title}}" property="og:title"/>
+<meta content="{{meta_description}}" property="og:description"/>
+<meta content="assets/social-preview.svg" property="og:image"/>
+<title>{{meta_title}}</title>
+<link href="assets/favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="styles.css" rel="stylesheet"/>
+<script type="application/ld+json">{{structured_data}}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="site-shell">
+<header class="site-header" id="top">
+<div class="container header-inner">
+<a aria-label="Yuhyun Lee — home" class="brand" href="#top">
+<span aria-hidden="true" class="brand-mark"><span>Y</span><span class="brand-dot"></span></span>
+<span class="brand-name">{{brand}}</span>
+</a>
+<nav aria-label="Main navigation" class="desktop-nav">
+<a href="#research">Research</a>
+<a href="#publications">Publications</a>
+<a href="#expertise">Expertise</a>
+<a href="#about">About</a>
+</nav>
+<div class="header-actions">
+<a class="header-contact" href="mailto:{{email}}">Get in touch <span aria-hidden="true">↗</span></a>
+<button aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menu-toggle">
+<span></span><span></span><span></span>
+</button>
+</div>
+</div>
+<nav aria-label="Mobile navigation" class="mobile-menu" hidden="" id="mobile-menu">
+<a href="#research">Research</a><a href="#publications">Publications</a><a href="#expertise">Expertise</a><a href="#about">About</a><a href="#contact">Contact</a>
+</nav>
+</header>
+<main id="main">
+<section aria-labelledby="hero-title" class="hero section-pad">
+<div aria-hidden="true" class="hero-glow"></div>
+<div class="container hero-grid">
+<div class="hero-copy">
+<div class="status-line">{{status}}</div>
+<p class="eyebrow hero-eyebrow">{{affiliation}}</p>
+<h1 id="hero-title">{{hero_title}}</h1>
+<p class="hero-lead">{{hero_intro}}</p>
+<p class="hero-body">{{hero_body}}</p>
+<div class="hero-buttons">
+<a class="btn btn-primary" href="#research">Explore my research <span aria-hidden="true">↗</span></a>
+<a class="btn btn-outline" download="" href="{{cv_url}}">Download CV <span aria-hidden="true">↓</span></a>
+</div>
+<div class="hero-links">{{hero_links}}</div>
+</div>
+<div aria-label="Conceptual illustration of a depth recording probe and neural signals" class="hero-visual">{{hero_visual}}</div>
+</div>
+<div aria-label="Research at a glance" class="container hero-facts">
+<div class="fact"><strong>32<span>sites</span></strong><span>Nasal stimulation array</span></div>
+<div class="fact"><strong>64<span>channels</span></strong><span>Depth-resolved electrophysiology</span></div>
+<div class="fact"><strong>&gt;5×</strong><span>Orientation-dependent threshold difference <a aria-label="Source paper" href="https://doi.org/10.1088/1741-2552/aeb04a" rel="noopener noreferrer" target="_blank">↗</a></span></div>
+<div class="fact"><strong>3<span>approaches</span></strong><span>In vivo · Ex vivo · Computational</span></div>
+</div>
+</section>
+<section aria-labelledby="research-title" class="section-pad research-section" id="research">
+<div class="container">
+<div class="section-heading"><div><p class="eyebrow">01 / SELECTED RESEARCH</p><h2 id="research-title">I build the system.<br/><span>I ask what the data mean.</span></h2></div><p class="heading-aside">From rodent neural interfaces to brain-slice experiments and high-throughput EEG tools, my work connects custom hardware, careful experiments, and quantitative analysis.</p></div>
+<div class="project-grid">{{projects_html}}</div>
+</div>
+</section>
+<section aria-labelledby="approach-title" class="impact-section"><div class="container impact-grid"><div><p class="eyebrow eyebrow-light">HOW I WORK</p><h2 id="approach-title">One question.<br/>Every layer of the system.</h2></div><div class="impact-steps"><div><span>01</span><p><strong>Design the platform</strong> <small>Electrodes, recording systems, prototyping, experimental workflows.</small></p></div><div><span>02</span><p><strong>Generate rigorous evidence</strong> <small>In vivo and ex vivo electrophysiology, artifact controls, repeatable measurements.</small></p></div><div><span>03</span><p><strong>Interpret and translate</strong> <small>Signal processing, statistics, field modeling, and biological context.</small></p></div></div></div></section>
+<section aria-labelledby="publications-title" class="section-pad publications-section" id="publications"><div class="container"><div class="section-heading pub-heading"><div><p class="eyebrow">02 / PUBLICATIONS</p><h2 id="publications-title">Selected <span>work in print.</span></h2></div><a class="text-arrow" href="{{scholar_url}}" rel="noopener noreferrer" target="_blank">Full publication record ↗</a></div><div class="pub-list">{{publications_html}}</div><div class="conference-note"><div aria-hidden="true" class="conference-icon">✳</div><div><strong id="conference-label">Selected conference presentations · 2026</strong><p>{{conference_text}}</p></div><span class="conference-date">{{conference_date}}</span></div></div></section>
+<section aria-labelledby="expertise-title" class="section-pad expertise-section" id="expertise"><div class="container"><div class="section-heading"><div><p class="eyebrow">03 / EXPERTISE</p><h2 id="expertise-title">A multidisciplinary <span>toolkit.</span></h2></div><p class="heading-aside">My strongest contribution is connecting experimental neuroscience with the practical engineering needed to make data reliable.</p></div><div class="expertise-grid">{{expertise_html}}</div></div></section>
+<section aria-labelledby="about-title" class="section-pad about-section" id="about"><div class="container about-grid"><div class="about-intro"><p class="eyebrow">04 / ABOUT</p><h2 id="about-title">{{about_title}}</h2><p>{{about_paragraph_1}}</p><p>{{about_paragraph_2}}</p><a class="text-arrow" href="mailto:{{email}}?subject=Research%20or%20career%20opportunity">Start a conversation ↗</a></div><div class="about-side"><div class="timeline">{{education_html}}</div><div class="award-block">{{awards_html}}</div></div></div></section>
+<section aria-labelledby="contact-title" class="contact-section" id="contact"><div class="container contact-grid"><div><p class="eyebrow eyebrow-light">05 / CONNECT</p><h2 id="contact-title">{{contact_title}}</h2><p>{{contact_body}}</p><a class="contact-email" href="mailto:{{email}}">{{email_contact}}</a></div><div class="contact-card"><div class="contact-card-head"><span class="status-dot"></span> AVAILABLE FOR CONVERSATIONS</div><p>{{contact_card}}</p><a class="btn btn-contact" href="mailto:{{email}}?subject=Opportunity%20to%20connect">Send an email <span>↗</span></a><div class="contact-social"><a href="{{linkedin_url}}" rel="noopener noreferrer" target="_blank">LinkedIn ↗</a><a href="{{scholar_url}}" rel="noopener noreferrer" target="_blank">Google Scholar ↗</a><a download="" href="{{cv_url}}">CV ↓</a></div></div></div></section>
+</main>
+<footer class="site-footer"><div class="container footer-inner"><div><span class="footer-symbol">Y<span>·</span>L</span><p>© <span id="copyright-year">2026</span> Yuhyun Lee. Designed for clarity, built for curiosity.</p></div><a href="#top">Back to top ↑</a></div></footer>
+</div>
+<script defer="" src="script.js"></script>
+</body>
+</html>

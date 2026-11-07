@@ -1,0 +1,11 @@
+<svg aria-label="Conceptual transnasal stimulation and depth probe schematic" role="img" viewbox="0 0 560 245" xmlns="http://www.w3.org/2000/svg">
+<defs><lineargradient id="nasalbg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#123b48"></stop><stop offset="1" stop-color="#205a61"></stop></lineargradient></defs><rect fill="url(#nasalbg)" height="245" width="560"></rect>
+<g stroke="#a4d0c7" stroke-opacity=".17"><path d="M40 50H520M40 100H520M40 150H520M40 200H520"></path><path d="M100 20V225M200 20V225M300 20V225M400 20V225M500 20V225"></path></g>
+<path d="M111 146C122 83 176 53 252 61C339 55 385 96 387 158C394 203 344 226 267 213C190 226 124 197 111 146Z" fill="#729d9d" fill-opacity=".16" stroke="#b8d7cc" stroke-opacity=".45" stroke-width="1.8"></path>
+<path d="M145 137C161 93 208 89 242 103C277 116 302 95 332 129C365 169 313 202 276 188C229 172 190 205 160 168" fill="none" stroke="#a4dacf" stroke-opacity=".45" stroke-width="2"></path>
+<path d="M251 18V207" stroke="#e4faf0" stroke-linecap="round" stroke-width="5"></path><path d="M251 18V207" stroke="#58bdad" stroke-dasharray="1 7" stroke-linecap="round" stroke-width="1"></path>
+<path d="M127 222Q222 206 305 222Q363 234 432 211" fill="none" stroke="#ffb893" stroke-linecap="round" stroke-width="4"></path>
+<g fill="#ffcfac"><circle cx="192" cy="215" r="5"></circle><circle cx="211" cy="215" r="5"></circle><circle cx="231" cy="217" r="5"></circle><circle cx="271" cy="218" r="5"></circle><circle cx="291" cy="220" r="5"></circle><circle cx="310" cy="221" r="5"></circle></g>
+<path d="M316 168L439 112" stroke="#8fe6d4" stroke-dasharray="4 6" stroke-opacity=".72" stroke-width="1.5"></path>
+<g fill="#e2f3ed" font-family="system-ui,sans-serif" font-size="12"><text x="447" y="110">Depth recording</text><text x="390" y="193">Nasal electrode array</text></g><path d="M316 221L381 190" stroke="#eab18f" stroke-opacity=".65"></path>
+</svg>
