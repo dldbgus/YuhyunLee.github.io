@@ -1,0 +1,82 @@
+[
+  {
+    "slug": "transnasal-neural-recording",
+    "category": "DOCTORAL RESEARCH",
+    "stage": "IN PROGRESS",
+    "title": "Transnasal stimulation & depth-resolved neural recording",
+    "summary": "Developed an in vivo mouse platform combining a 32-site nasal stimulation array and 64-channel intracerebral recordings to characterize stimulation-evoked activity across recording depths. Current work examines response timing, stimulation parameters, and anatomical correspondence—not yet selective deep-brain activation.",
+    "contribution": "Designed and integrated a preclinical stimulation–recording workflow, including nasal electrode configurations, stereotaxic neural recordings, data quality controls, and analysis tools.",
+    "outcome": "Recorded depth-resolved stimulation-evoked activity across the mouse brain. Observed short-latency responses in deep recording channels; the degree of anatomical targeting and selectivity remains under investigation.",
+    "tags": [
+      "In vivo electrophysiology",
+      "System integration",
+      "Signal processing"
+    ],
+    "art": "nasal",
+    "cover_image": "",
+    "gallery": [],
+    "paper_url": "",
+    "paper_label": "",
+    "image_caption": "Conceptual schematic; replace with an approved image from your study."
+  },
+  {
+    "slug": "electric-field-orientation",
+    "category": "PUBLISHED · JNE 2026",
+    "stage": "FIRST AUTHOR",
+    "title": "Why electric-field orientation matters",
+    "summary": "Designed orthogonal stimulation configurations for cortical brain slices and paired neural recordings with FEM modeling. Observed activation thresholds more than fivefold lower for out-of-plane fields than for fields aligned with cortical columns.",
+    "contribution": "Built and validated ex vivo measurement configurations, acquired electrophysiology data, and investigated the relation between field direction and activation threshold.",
+    "outcome": "Published evidence that field orientation relative to tissue structure can strongly influence neural activation in this ex vivo model.",
+    "tags": [
+      "Brain slices",
+      "COMSOL FEM",
+      "Quantitative analysis"
+    ],
+    "art": "slice",
+    "cover_image": "",
+    "gallery": [],
+    "paper_url": "https://doi.org/10.1088/1741-2552/aeb04a",
+    "paper_label": "Read journal paper",
+    "image_caption": "Conceptual field-orientation illustration."
+  },
+  {
+    "slug": "zebrafish-eeg-platforms",
+    "category": "MASTER'S RESEARCH",
+    "stage": "2 JOURNAL PAPERS",
+    "title": "Scalable EEG platforms for zebrafish",
+    "summary": "Built multi-animal EEG systems for adult and larval zebrafish using mechanical design and microfluidics. Validated recording performance in seizure and anti-epileptic treatment models. Related device inventions received registrations in Korea and the EU.",
+    "contribution": "Designed device architectures and recording workflows for repeatable multi-animal EEG studies, including microfluidic positioning for larval zebrafish.",
+    "outcome": "Published EEG platforms for adult and larval zebrafish and contributed to registered EEG device patents in Korea and the EU.",
+    "tags": [
+      "EEG",
+      "Microfluidics",
+      "Device prototyping"
+    ],
+    "art": "fish",
+    "cover_image": "",
+    "gallery": [],
+    "paper_url": "https://doi.org/10.1016/j.bios.2020.112315",
+    "paper_label": "Read journal paper",
+    "image_caption": "Conceptual zebrafish recording illustration."
+  },
+  {
+    "slug": "electrical-field-modeling",
+    "category": "CROSS-DISCIPLINARY",
+    "stage": "MODELING + EXPERIMENT",
+    "title": "Connecting electric-field models with physiology",
+    "summary": "Use FEM simulations, electrode configurations, and experimental response measurements to reason about stimulation efficacy and model limitations. Contributed to preclinical evaluation of transnasal DeepFocus stimulation.",
+    "contribution": "Developed and interpreted computational electric-field models, compared candidate electrode configurations, and connected predicted fields to electrophysiology questions.",
+    "outcome": "Contributed to conference and collaborative work investigating the feasibility and limitations of transnasal brain stimulation.",
+    "tags": [
+      "COMSOL",
+      "ROAST / DeepROAST",
+      "Model–experiment comparison"
+    ],
+    "art": "model",
+    "cover_image": "",
+    "gallery": [],
+    "paper_url": "https://doi.org/10.1109/EMBC53108.2024.10781751",
+    "paper_label": "View conference paper",
+    "image_caption": "Conceptual model–experiment illustration."
+  }
+]
