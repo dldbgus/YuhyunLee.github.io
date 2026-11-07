@@ -1,0 +1,138 @@
+# Visual editing at https://app.pagescms.org
+# The site's data lives in data/*.json; GitHub Actions rebuilds the public pages.
+media:
+  input: assets/uploads
+  output: /assets/uploads
+  rename: safe
+  categories: [image, document]
+
+content:
+  - name: site
+    label: 01 · Homepage & contact
+    type: file
+    path: data/site.json
+    format: json
+    fields:
+      - { name: name, label: Name, type: string, required: true }
+      - { name: brand_subtitle, label: Brand subtitle, type: string }
+      - { name: status, label: Availability notice, type: string }
+      - { name: affiliation, label: Affiliation line, type: string }
+      - { name: hero_title, label: Main headline, type: string, required: true }
+      - { name: hero_highlight, label: Highlighted headline, type: string }
+      - { name: hero_intro, label: Short introduction, type: text }
+      - { name: hero_body, label: Research introduction, type: text }
+      - name: profile_photo
+        label: Optional hero portrait (leave blank for schematic)
+        type: image
+        description: Upload a personal portrait to replace the scientific illustration in the hero area.
+      - { name: location, label: Location, type: string }
+      - { name: email, label: Email, type: string, required: true }
+      - { name: scholar_url, label: Google Scholar link, type: string }
+      - { name: linkedin_url, label: LinkedIn link, type: string }
+      - name: cv_url
+        label: CV PDF
+        type: file
+        options:
+          extensions: [pdf]
+      - { name: meta_description, label: Search engine description, type: text }
+      - { name: about_title, label: About headline, type: string }
+      - { name: about_highlight, label: About highlighted phrase, type: string }
+      - { name: about_paragraph_1, label: About paragraph 1, type: text }
+      - { name: about_paragraph_2, label: About paragraph 2, type: text }
+      - { name: conference_text, label: Conferences description, type: text }
+      - { name: conference_date, label: Conferences date label, type: string }
+      - { name: contact_title, label: Contact headline, type: string }
+      - { name: contact_highlight, label: Contact highlighted phrase, type: string }
+      - { name: contact_body, label: Contact description, type: text }
+      - { name: contact_card, label: Contact card short message, type: text }
+
+  - name: projects
+    label: 02 · Research projects
+    type: file
+    path: data/projects.json
+    format: json
+    list: true
+    fields:
+      - name: slug
+        label: URL slug (lowercase and dashes; unique)
+        type: string
+        required: true
+        pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+        description: Changing this changes the project's URL. Example 'zebrafish-eeg'.
+      - { name: category, label: Category / badge, type: string }
+      - { name: stage, label: Status / secondary badge, type: string }
+      - { name: title, label: Project title, type: string, required: true }
+      - { name: summary, label: Short overview (shown on home), type: text, required: true }
+      - { name: contribution, label: My contribution (detail page), type: text }
+      - { name: outcome, label: Findings and significance (detail page), type: text }
+      - name: tags
+        label: Key methods / skills
+        type: string
+        list: true
+      - name: art
+        label: Fallback artwork if no image uploaded
+        type: select
+        options:
+          values: [nasal, slice, fish, model]
+      - name: cover_image
+        label: Main project image
+        type: image
+        description: Upload study figure or photo. Leave blank to retain the conceptual illustration.
+      - name: image_caption
+        label: Main image caption / disclaimer
+        type: text
+      - name: gallery
+        label: Additional figure gallery (detail page)
+        type: image
+        options:
+          multiple:
+            max: 8
+      - { name: paper_url, label: Associated paper URL, type: string }
+      - { name: paper_label, label: Paper button text, type: string }
+
+  - name: publications
+    label: 03 · Publications
+    type: file
+    path: data/publications.json
+    format: json
+    list: true
+    fields:
+      - { name: year, label: Year, type: string }
+      - { name: venue, label: Journal and role, type: string }
+      - { name: title, label: Publication title, type: text, required: true }
+      - { name: authors, label: Authors, type: text }
+      - { name: url, label: DOI / publication link, type: string }
+
+  - name: expertise
+    label: 04 · Skills & expertise
+    type: file
+    path: data/expertise.json
+    format: json
+    list: true
+    fields:
+      - { name: title, label: Skills section title, type: string, required: true }
+      - { name: description, label: Summary, type: text }
+      - name: tags
+        label: Skills keywords
+        type: string
+        list: true
+
+  - name: education
+    label: 05 · Education
+    type: file
+    path: data/education.json
+    format: json
+    list: true
+    fields:
+      - { name: degree, label: Degree / program, type: string }
+      - { name: institution, label: University, type: string }
+      - { name: detail, label: Dates / advisor, type: string }
+
+  - name: awards
+    label: 06 · Awards & recognition
+    type: file
+    path: data/awards.json
+    format: json
+    list: true
+    fields:
+      - { name: text, label: Award or highlight, type: string }
