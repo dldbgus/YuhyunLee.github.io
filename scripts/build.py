@@ -1,210 +1,165 @@
-"""Build the editable portfolio from JSON, without installing Python dependencies.
-
-Run: python3 scripts/build.py
-GitHub Actions runs this automatically whenever Pages CMS saves content.
-"""
+# Build a clean academic portfolio using only Python standard library.
+# Content is in data/*.json and can be edited with Pages CMS.
+# Run: python3 scripts/build.py
 from pathlib import Path
 from html import escape
-from urllib.parse import urlparse, unquote
-import json, re, shutil, sys
-
+from urllib.parse import urlparse,unquote
+from itertools import groupby
+import json,re,shutil,sys
 ROOT=Path(__file__).resolve().parent.parent
 DATA=ROOT/'data'
 SITE=ROOT/'_site'
 
 def read_json(name):
-    return json.loads((DATA/f'{name}.json').read_text(encoding='utf-8'))
+    return json.loads((DATA/f'{name}.json').read_text(encoding='utf8'))
 
-def e(x): return escape(str(x if x is not None else ''), quote=True)
-def valid_url(url):
-    url=str(url or '').strip()
-    if not url: return ''
-    p=urlparse(url)
-    return url if p.scheme in ('https','mailto') and (p.netloc or p.scheme=='mailto') else ''
+def h(v): return escape(str(v if v is not None else ''),quote=True)
 
-def relative_asset(path, depth=0):
-    p=str(path or '').strip()
-    if not p: return ''
-    if p.startswith(('https://','http://')): # allow publicly hosted images
-        return p if valid_url(p) else ''
-    # Only allow repository-local assets so CMS cannot turn file fields into unsafe protocols.
-    p=p.lstrip('/')
-    if not p.startswith('assets/') or '..' in Path(unquote(p)).parts: return ''
-    return '../'*depth+p
+def safe_url(url):
+    u=str(url or '').strip()
+    p=urlparse(u)
+    return u if p.scheme in ('https','mailto') and (p.netloc or p.scheme=='mailto') else ''
 
-def img(path, alt, depth=0, cls=''):
-    u=relative_asset(path,depth)
-    return f'<img class="{e(cls)}" src="{e(u)}" alt="{e(alt)}" loading="lazy" decoding="async">' if u else ''
+def asset(path,depth=0):
+    u=str(path or '').strip()
+    if not u:return ''
+    if u.startswith('https://'):return safe_url(u)
+    u=u.lstrip('/')
+    if not u.startswith('assets/') or '..' in Path(unquote(u)).parts:return ''
+    return '../'*depth + u
 
-def link(url, text, cls=None, external=True):
-    u=valid_url(url)
-    if not u: return ''
-    attrs=' target="_blank" rel="noopener noreferrer"' if external else ''
-    c=f' class="{e(cls)}"' if cls else ''
-    return f'<a{c} href="{e(u)}"{attrs}>{e(text)} ↗</a>'
+def image_html(path,alt,depth=0,klass=''):
+    src=asset(path,depth)
+    return f'<img src="{h(src)}" alt="{h(alt)}" class="{h(klass)}" loading="lazy" decoding="async">' if src else ''
 
-def render_project_art(p, depth=0):
-    slug=p.get('art') if p.get('art') in ('nasal','slice','fish','model') else 'model'
-    cover=relative_asset(p.get('cover_image'), depth)
-    image=img(p.get('cover_image'),p.get('title','Research project'),depth,'uploaded-art') if cover else img('assets/illustrations/'+slug+'.svg',p.get('title','Research project')+' conceptual illustration',depth,'art-fallback')
-    return f'<div class="project-art art-{slug}">{image}<span class="project-art-index">{e(p.get("category","RESEARCH"))}</span></div>'
+def ext_link(url,label):
+    u=safe_url(url)
+    return f'<a href="{h(u)}" rel="noopener noreferrer" target="_blank">{h(label)}</a>' if u else ''
+
+def fill(template,values):
+    for key,value in values.items():
+        token='{{'+key+'}}'
+        if token not in template:raise ValueError('Missing template token: '+token)
+        template=template.replace(token,str(value))
+    missing=re.findall(r'\{\{[^{}]+\}\}',template)
+    if missing: raise ValueError('Unused template placeholders: '+str(missing))
+    return template
+
+def render_news(news):
+    return '\n'.join(f'<li><time>{h(n.get("date",""))}</time><span>{h(n.get("text",""))}{(" "+ext_link(n.get("url"),n.get("link_label","More"))) if safe_url(n.get("url")) else ""}</span></li>' for n in news)
 
 def render_projects(projects):
     out=[]
-    for i,p in enumerate(projects):
-        slug=p['slug']
-        classes='project-card' + (' featured-project' if i==0 else '')
-        tags=''.join('<span>'+e(v)+'</span>' for v in p.get('tags',[]))
-        paper=link(p.get('paper_url'),p.get('paper_label') or 'Read paper','paper-link')
-        out.append(f'''<article class="{classes}">
-            {render_project_art(p)}
-            <div class="project-content"><div class="project-meta"><span class="tag">{e(p.get('category',''))}</span><span>{e(p.get('stage',''))}</span></div>
-                <h3>{e(p.get('title',''))}</h3><p>{e(p.get('summary',''))}</p>
-                <div class="chip-row">{tags}</div>
-                <div class="project-actions"><a class="project-link" href="projects/{e(slug)}/">Explore project <span aria-hidden="true">↗</span></a>{paper}</div>
-            </div></article>''')
+    for p in projects:
+        name=h(p.get('title',''))
+        url='projects/'+h(p['slug'])+'/'
+        cover=image_html(p.get('cover_image'),p.get('image_caption') or p.get('title','Research figure'),0,'research-cover')
+        media=f'<a class="research-media" href="{url}" aria-label="View {name}">{cover}</a>' if cover else ''
+        out.append(f'''<article class="research-item{(' has-cover' if cover else '')}">
+          {media}<div class="research-text">
+          <p class="research-eyebrow">{h(p.get('category',''))}</p>
+          <h3><a href="{url}">{name}</a></h3>
+          <p>{h(p.get('summary',''))}</p>
+          <div class="research-links"><a href="{url}">Project details →</a>{(' · '+ext_link(p.get('paper_url'),p.get('paper_label') or 'Related paper')) if safe_url(p.get('paper_url')) else ''}</div>
+          </div></article>''')
     return '\n'.join(out)
 
 def render_publications(publications):
-    out=[]
+    years=[]
     for p in publications:
-        u=valid_url(p.get('url'))
-        # Nonlinked publication entries are supported too.
-        tag='a' if u else 'div'
-        href=f' href="{e(u)}" target="_blank" rel="noopener noreferrer"' if u else ''
-        out.append(f'''<{tag} class="pub-row"{href}><span class="pub-year">{e(p.get('year',''))}</span>
-        <span class="pub-details"><span class="pub-type">{e(p.get('venue',''))}</span><strong>{e(p.get('title',''))}</strong><small>{e(p.get('authors',''))}</small></span>
-        <span class="pub-arrow" aria-hidden="true">{'↗' if u else '·'}</span></{tag}>''')
+        year=str(p.get('year',''))
+        if year not in years:years.append(year)
+    out=[]
+    for year in years:
+        rows=[p for p in publications if str(p.get('year',''))==year]
+        out.append(f'<h3 class="pub-year">{h(year)}</h3><ol class="publication-list">')
+        for p in rows:
+            u=safe_url(p.get('url'))
+            title=h(p.get('title',''))
+            title=f'<a href="{h(u)}" target="_blank" rel="noopener noreferrer">{title}</a>' if u else title
+            out.append(f'<li><div class="pub-title">{title}</div><div class="pub-authors">{h(p.get("authors",""))}</div><div class="pub-venue">{h(p.get("venue",""))}</div></li>')
+        out.append('</ol>')
     return '\n'.join(out)
 
-def render_expertise(expertise):
-    return '\n'.join(f'''<div class="expertise-card"><div class="expertise-no">/ {i+1:02d}</div>
-    <h3>{e(s.get('title',''))}</h3><p>{e(s.get('description',''))}</p>
-    <div class="skill-tags">{''.join('<span>'+e(t)+'</span>' for t in s.get('tags',[]))}</div></div>'''
-         for i,s in enumerate(expertise))
+def render_education(items):
+    return '\n'.join(f'<div class="education-row"><div><strong>{h(item.get("degree",""))}</strong><span>{h(item.get("institution",""))}</span></div><small>{h(item.get("detail",""))}</small></div>' for item in items)
 
-def render_education(education):
-    return '<p class="mini-label">EDUCATION</p>\n'+'\n'.join(
-        f'''<div class="timeline-row"><span class="timeline-point"></span><div><strong>{e(row.get('degree',''))}</strong><p>{e(row.get('institution',''))}</p><small>{e(row.get('detail',''))}</small></div></div>'''
-        for row in education)
+def render_expertise(items):
+    return '\n'.join(f'<div class="skill-row"><strong>{h(item.get("title",""))}</strong><p>{h(item.get("description",""))}</p></div>' for item in items)
 
-def render_awards(awards):
-    return '<p class="mini-label">SELECTED RECOGNITION</p>\n'+'\n'.join('<p>'+e(row.get('text',''))+'</p>' for row in awards)
+def render_awards(items):
+    return '\n'.join(f'<li>{h(item.get("text",""))}</li>' for item in items)
 
-def render_hero(site):
-    u=relative_asset(site.get('profile_photo'))
-    if u:
-        return f'''<div class="visual-topbar"><span><span class="tiny-dot"></span> RESEARCHER PROFILE</span><span>YUH YUN LEE</span></div>
-        {img(site['profile_photo'],site.get('name','Researcher')+' profile photograph',0,'hero-portrait')}
-        <div class="visual-bottombar"><span>NEURAL ENGINEERING</span><span>RESEARCH & DEVELOPMENT</span></div>'''
-    return f'''<div class="visual-topbar"><span><span class="tiny-dot"></span> RESEARCH INTERFACE</span><span>01 / 03</span></div>
-        {img('assets/illustrations/hero.svg','Conceptual neural recording schematic, not experimental data',0,'hero-diagram')}
-        <div class="visual-bottombar"><span>DEPTH-RESOLVED NEUROPHYSIOLOGY</span><span>CONCEPTUAL SCHEMATIC</span></div>
-        <div class="floating-note"><span class="floating-icon">↗</span><div><strong>From signal to insight</strong><small>Stimulation · Recording · Analysis</small></div></div>'''
-
-def fill_token(t,key,value):
-    token='{{'+key+'}}'
-    if token not in t: raise ValueError('Missing token: '+key)
-    return t.replace(token,str(value))
-
-def build_index(site,projects,publications,expertise,education,awards):
-    template=(ROOT/'source'/'template.html').read_text(encoding='utf-8')
-    intro=f"I'm <strong>{e(site['name'])}</strong>, {e(site.get('hero_intro',''))}"
-    scholar=valid_url(site.get('scholar_url',''))
-    linkedin=valid_url(site.get('linkedin_url',''))
-    links=link(scholar,'Google Scholar').replace(' ↗',' ↗')+'<span class="hero-separator">/</span>'+link(linkedin,'LinkedIn')+'<span class="hero-separator">/</span><span>'+e(site.get('location',''))+'</span>'
-    email=site.get('email','')
-    email_href='mailto:'+email
-    profile={
-       'brand':e(site['name'])+'<span class="brand-sub">'+e(site.get('brand_subtitle',''))+'</span>',
-       'status':'<span class="status-dot"></span> '+e(site.get('status','')).upper(),
-       'affiliation':e(site.get('affiliation','')),
-       'hero_title':e(site.get('hero_title',''))+'<br><em>'+e(site.get('hero_highlight',''))+'</em>',
-       'hero_intro':intro,
-       'hero_body':e(site.get('hero_body','')),
-       'hero_links':links,
-       'hero_visual':render_hero(site),
-       'projects_html':render_projects(projects),
-       'publications_html':render_publications(publications),
-       'expertise_html':render_expertise(expertise),
-       'education_html':render_education(education),
-       'awards_html':render_awards(awards),
-       'conference_text':e(site.get('conference_text','')),
-       'conference_date':e(site.get('conference_date','')),
-       'about_title':e(site.get('about_title',''))+'<br><span>'+e(site.get('about_highlight',''))+'</span>',
-       'about_paragraph_1':e(site.get('about_paragraph_1','')),
-       'about_paragraph_2':e(site.get('about_paragraph_2','')),
-       'contact_title':e(site.get('contact_title',''))+' <em>'+e(site.get('contact_highlight',''))+'</em>',
-       'contact_body':e(site.get('contact_body','')),
-       'contact_card':e(site.get('contact_card','')),
-       'email_contact':e(email)+' <span aria-hidden="true">↗</span>',
-       'email':e(email),
-       'scholar_url':e(scholar),
-       'linkedin_url':e(linkedin),
-       'cv_url':e(relative_asset(site.get('cv_url')) or 'assets/Yuhyun_Lee_CV.pdf'),
-       'meta_description':e(site.get('meta_description','')),
-       'meta_title':e(site['name']+' | Neural Engineering Researcher'),
-       'structured_data':json.dumps({'@context':'https://schema.org','@type':'Person','name':site['name'],'jobTitle':'Biomedical Engineering Ph.D. Candidate','affiliation':{'@type':'Organization','name':'Carnegie Mellon University'},'email':email_href,'sameAs':[x for x in [scholar,linkedin] if x],'knowsAbout':['neural engineering','electrophysiology','neural stimulation']},ensure_ascii=False).replace('<','\\u003c'),
-    }
-    for k,v in profile.items():
-        template=fill_token(template,k,v)
-    leftovers=re.findall(r'\{\{[^{}]+\}\}',template)
-    if leftovers:raise ValueError(f'Unreplaced tokens: {leftovers}')
-    return template
+def page_head(title,desc,depth=0):
+    lead='../'*depth
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="theme-color" content="#ffffff"><meta name="description" content="{h(desc)}"><title>{h(title)}</title><link rel="icon" href="{lead}assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="{lead}styles.css"><link rel="stylesheet" href="{lead}project-detail.css"></head>'''
 
 def project_detail(site,p):
-    slug=e(p['slug'])
-    tags=' '.join(f'<span>{e(tag)}</span>' for tag in p.get('tags',[]))
-    art=render_project_art(p,depth=2)
-    gallery=p.get('gallery') or []
-    gallery_html='\n'.join(f'<figure>{img(image,p.get("title","Research figure")+" project image",2)}<figcaption>Research image · {e(p.get("title",""))}</figcaption></figure>' for image in gallery if relative_asset(image,2))
-    paper=link(p.get('paper_url'),p.get('paper_label') or 'Related paper','detail-paper')
-    return f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="#f7f8f5"><meta name="description" content="{e(p.get('summary',''))}">
-    <title>{e(p.get('title',''))} | {e(site['name'])}</title><link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
-    <link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="../../project-detail.css"></head><body>
-    <a class="skip-link" href="#project-main">Skip to content</a>
-    <header class="site-header"><div class="container header-inner"><a class="brand" href="../../index.html" aria-label="Home"><span class="brand-mark"><span>Y</span><span class="brand-dot"></span></span><span class="brand-name">{e(site['name'])}<span class="brand-sub">NEURAL ENGINEERING</span></span></a><a class="header-contact" href="../../index.html#research">← All research</a></div></header>
-    <main id="project-main"><section class="detail-hero section-pad"><div class="container"><a href="../../index.html#research" class="detail-back">← Back to selected research</a>
-    <p class="eyebrow">{e(p.get('category','RESEARCH'))} · {e(p.get('stage',''))}</p><h1>{e(p.get('title',''))}</h1><p class="detail-intro">{e(p.get('summary',''))}</p>
-    <div class="chip-row">{tags}</div></div></section>
-    <section class="detail-content section-pad"><div class="container detail-grid"><div class="detail-visual">{art}<p class="detail-caption">{e(p.get('image_caption',''))}</p></div>
-    <div class="detail-overview"><p class="eyebrow">PROJECT OVERVIEW</p><h2>From idea to <span>evidence.</span></h2>
-    <h3>My contribution</h3><p>{e(p.get('contribution',''))}</p>
-    <h3>Findings &amp; significance</h3><p>{e(p.get('outcome',''))}</p>
-    <div class="detail-cta">{paper}</div></div></div></section>
-    {('<section class="detail-gallery section-pad"><div class="container"><p class="eyebrow">SUPPORTING IMAGES</p><h2>Inside the <span>project.</span></h2><div class="detail-gallery-grid">'+gallery_html+'</div></div></section>') if gallery_html else ''}
-    <section class="detail-footer"><div class="container"><p>Interested in this work?</p><h2>Let's connect.</h2>
-    <a class="btn btn-primary" href="mailto:{e(site['email'])}?subject={e('Research inquiry: '+p.get('title',''))}">Contact {e(site['name'])} ↗</a>
-    <a class="detail-back" href="../../index.html#research">Explore other projects ↑</a></div></section></main>
-    <footer class="site-footer"><div class="container footer-inner"><div><p>© {e(site['name'])}. Research portfolio.</p></div><a href="../../index.html">Home ↑</a></div></footer>
-    </body></html>'''
+    lead='../../'
+    title=p.get('title','Research project')
+    cover=image_html(p.get('cover_image'),p.get('image_caption') or title,depth=2,klass='detail-cover-image')
+    cover_html=f'<figure class="detail-cover">{cover}{("<figcaption>"+h(p.get("image_caption"))+"</figcaption>") if p.get("image_caption") else ""}</figure>' if cover else ''
+    gallery=''.join(f'<figure>{image_html(path,title+" additional figure",depth=2)}<figcaption>Research figure</figcaption></figure>' for path in p.get('gallery') or [] if asset(path,2))
+    tags=''.join(f'<span>{h(t)}</span>' for t in p.get('tags',[]))
+    paper=ext_link(p.get('paper_url'),p.get('paper_label') or 'Related publication')
+    return f'''{page_head(title+' | '+site.get('name','Yuhyun Lee'),p.get('summary',''),2)}<body><a class="skip-link" href="#project">Skip to content</a>
+      <div class="page"><header class="site-header"><a href="{lead}index.html" class="site-name">{h(site.get('name','Yuhyun Lee'))}</a><nav class="site-nav" aria-label="Page navigation"><a href="{lead}index.html#research">← Research</a><a href="{lead}index.html#publications">Publications</a><a href="{lead}index.html#contact">Contact</a></nav></header>
+      <main id="project" class="detail-page"><a href="{lead}index.html#research" class="detail-back">← Back to selected research</a><div class="detail-kicker">{h(p.get('category',''))}</div><h1>{h(title)}</h1>
+      <p class="detail-summary">{h(p.get('summary',''))}</p>{('<div class="detail-tags">'+tags+'</div>') if tags else ''}
+      {cover_html}<section><h2>My contribution</h2><p>{h(p.get('contribution',''))}</p></section>
+      <section><h2>Findings &amp; significance</h2><p>{h(p.get('outcome',''))}</p></section>
+      {('<p class="detail-paper">'+paper+'</p>') if paper else ''}
+      {('<section><h2>Research figures</h2><div class="detail-gallery">'+gallery+'</div></section>') if gallery else ''}
+      </main><footer class="site-footer"><span>© 2026 {h(site.get('name','Yuhyun Lee'))}</span><a href="{lead}index.html#research">All research ↑</a></footer></div></body></html>'''
+
+def build_index(site,projects,publications,expertise,education,awards,news):
+    template=(ROOT/'source/template.html').read_text(encoding='utf8')
+    photo=image_html(site.get('profile_photo'),site.get('name','Yuhyun Lee')+' profile photograph',0,'portrait')
+    portrait=f'<div class="portrait-wrap">{photo}</div>' if photo else ''
+    scholar=safe_url(site.get('scholar_url'))
+    linkedin=safe_url(site.get('linkedin_url'))
+    cv=asset(site.get('cv_url')) or 'assets/Yuhyun_Lee_CV.pdf'
+    email=site.get('email','')
+    social=[f'<a href="mailto:{h(email)}">Email</a>',f'<a href="{h(cv)}" download>CV</a>']
+    if scholar:social.append(ext_link(scholar,'Google Scholar'))
+    if linkedin:social.append(ext_link(linkedin,'LinkedIn'))
+    return fill(template,{
+        'name':h(site.get('name','Yuhyun Lee')), 'meta_title':h(site.get('name','Yuhyun Lee')+' | Academic Profile'),
+        'meta_description':h(site.get('meta_description','')),'status':h(site.get('status','')),
+        'position':h(site.get('position','Ph.D. Candidate')),'department':h(site.get('department','Biomedical Engineering')),'institution':h(site.get('institution','Carnegie Mellon University')),
+        'hero_intro':h(site.get('hero_intro','')),'hero_body':h(site.get('hero_body','')),
+        'about_paragraph_2':h(site.get('about_paragraph_2','')),'location':h(site.get('location','')),
+        'social_links':'<span class="link-dot"> · </span>'.join(social),'profile_html':portrait,
+        'news_html':render_news(news),'projects_html':render_projects(projects),
+        'publications_html':render_publications(publications), 'scholar_more':ext_link(scholar,'Google Scholar ↗'),
+        'education_html':render_education(education),'expertise_html':render_expertise(expertise),'awards_html':render_awards(awards),
+        'email':h(email),'linkedin_url':h(linkedin or '#'),'scholar_url':h(scholar or '#'),
+        'contact_body':h(site.get('contact_body','')),
+        'structured_data':json.dumps({'@context':'https://schema.org','@type':'Person','name':site.get('name','Yuhyun Lee'),'jobTitle':'Biomedical Engineering Ph.D. Candidate','affiliation':{'@type':'Organization','name':'Carnegie Mellon University'},'email':'mailto:'+email,'sameAs':[x for x in [scholar,linkedin] if x]},ensure_ascii=False).replace('<','\u003c')
+    })
 
 def main():
-    site=read_json('site');projects=read_json('projects');publications=read_json('publications');expertise=read_json('expertise');education=read_json('education');awards=read_json('awards')
-    for key,array in [('projects',projects),('publications',publications),('expertise',expertise),('education',education),('awards',awards)]:
-        if not isinstance(array,list):raise TypeError(f'data/{key}.json must be a list')
+    site=read_json('site');projects=read_json('projects');publications=read_json('publications');expertise=read_json('expertise');education=read_json('education');awards=read_json('awards');news=read_json('news')
+    for name,arr in [('projects',projects),('publications',publications),('expertise',expertise),('education',education),('awards',awards),('news',news)]:
+        if not isinstance(arr,list):raise TypeError('data/'+name+'.json must be a list')
     slugs=[str(p.get('slug','')) for p in projects]
-    if not all(re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',s) for s in slugs) or len(set(slugs))!=len(slugs):
-        raise ValueError('Project slugs must be unique lowercase letters/numbers/dashes, such as zebrafish-eeg')
-    html=build_index(site,projects,publications,expertise,education,awards)
-    (ROOT/'index.html').write_text(html,encoding='utf-8')
-    # local previews: can open index.html without a server; detail pages also work.
-    local_projects=ROOT/'projects'
-    if local_projects.exists():shutil.rmtree(local_projects)
-    for p in projects:
-        d=local_projects/p['slug'];d.mkdir(parents=True,exist_ok=True)
-        (d/'index.html').write_text(project_detail(site,p),encoding='utf8')
+    if not all(re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',s) for s in slugs) or len(set(slugs))!=len(slugs):raise ValueError('Project slugs must be unique lowercase letters/numbers/dashes')
+    (ROOT/'index.html').write_text(build_index(site,projects,publications,expertise,education,awards,news),encoding='utf8')
+    projects_dir=ROOT/'projects'
+    if projects_dir.exists():shutil.rmtree(projects_dir)
+    for project in projects:
+        folder=projects_dir/project['slug'];folder.mkdir(parents=True,exist_ok=True)
+        (folder/'index.html').write_text(project_detail(site,project),encoding='utf8')
     if SITE.exists():shutil.rmtree(SITE)
-    SITE.mkdir()
-    for filename in ('index.html','styles.css','script.js','project-detail.css'):
-        shutil.copy2(ROOT/filename,SITE/filename)
+    SITE.mkdir(parents=True)
+    for f in ('index.html','styles.css','project-detail.css'):
+        shutil.copy2(ROOT/f,SITE/f)
     shutil.copytree(ROOT/'assets',SITE/'assets')
-    shutil.copytree(local_projects,SITE/'projects')
+    shutil.copytree(projects_dir,SITE/'projects')
     (SITE/'.nojekyll').write_text('',encoding='utf8')
-    print('Built: index +',len(projects),'project pages, output:',SITE)
+    print('Built minimalist academic portfolio,',len(projects),'projects,',len(publications),'publications,',len(news),'news items')
 
 if __name__=='__main__':
     try:main()
-    except Exception as err:
-        print('BUILD FAILED:',err,file=sys.stderr);raise
+    except Exception as exc:
+        print('BUILD FAILED',exc,file=sys.stderr);raise

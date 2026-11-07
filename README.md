@@ -1,29 +1,26 @@
-# Yuhyun Lee | Editable Research Portfolio
+# Yuhyun Lee — Minimal Academic Research Website
 
-A professional, responsive academic/industry research portfolio with **GitHub Pages + Pages CMS** editing.
+A simple, editable academic profile inspired by classic faculty / researcher sites.
 
-## Quick start
+## How it works
 
-See **`START_HERE_한국어.md`** for Korean setup and editing instructions.
+- **GitHub Pages** publishes the static website.
+- **Pages CMS** at https://app.pagescms.org edits content from `data/*.json` and uploaded research images.
+- **GitHub Actions** (`.github/workflows/publish.yml`) runs `python scripts/build.py` on every push.
+- HTML is generated automatically; CSS maintains one clean, consistent design.
 
-Architecture:
+## To update the existing repository
 
-- `.pages.yml`: Pages CMS editor schema (text, multiple images, documents)
-- `data/*.json`: all user-editable content
-- `scripts/build.py`: standard-library-only static-site generator
-- `source/template.html`: original home design template
-- `assets/illustrations/*.svg`: conceptual figure fallbacks
-- `assets/uploads`: CMS-managed images and CV replacements
-- `.github/workflows/publish.yml`: GitHub Actions to rebuild and deploy
-- `_site/`: generated publication output (do not manually edit)
-- `index.html`, `projects/.../index.html`: pre-generated local preview
+Copy all files from the **UPDATE_ONLY** ZIP into the root of your *existing, locally cloned* GitHub repo, replacing same-name files. Commit once, then Push origin in GitHub Desktop. Do not copy the enclosing folder or the `.git` directory. You do not need to make a new repository.
 
-To build locally: `python3 scripts/build.py`. No pip packages, Node installs, or cloud database required.
+## Edit content
 
-For GitHub Pages, set **Source → GitHub Actions**. The workflow publishes `_site`, regenerating the HTML and project detail pages whenever content files are committed from Pages CMS.
+Pages CMS: https://app.pagescms.org → select repository → About & contact / Recent news / Research projects / Publications. New photos can be uploaded for your profile and each project; until an image is added, only text appears.
 
-To edit through the browser: https://app.pagescms.org — authorize your repository and select `main`.
+## Build locally (optional)
 
-Public-facing content is in English; editing instructions are in Korean. No analytics, tracking scripts, third-party fonts, cookies, or external CSS frameworks are required.
+```bash
+python3 scripts/build.py
+```
 
-**Careful:** This portfolio contains an October 2026 CV and some conceptual schematic placeholders. Review scientific claims and publication status before public release.
+Your source fields are escaped on output, optional image filenames are validated, and external link schemes are restricted to https/mailto.
