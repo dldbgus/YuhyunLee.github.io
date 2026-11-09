@@ -1,20 +1,31 @@
 [
   {
     "date": "Nov 2026",
-    "text": "Presenting transnasal electrical stimulation research at the IEEE BRAIN Discovery and Neurotechnology Workshop in Washington, DC.",
-    "url": "",
-    "link_label": ""
-  },
-  {
-    "date": "Nov 2026",
-    "text": "Presenting an in vivo TnES poster at the Society for Neuroscience annual meeting.",
-    "url": "",
-    "link_label": ""
+    "text": "Presenting transnasal electrical stimulation research at the IEEE BRAIN Discovery and Neurotechnology Workshop in Washington, DC."
   },
   {
     "date": "Oct 2026",
     "text": "Our study on out-of-plane electric fields was published in the Journal of Neural Engineering.",
     "url": "https://doi.org/10.1088/1741-2552/aeb04a",
     "link_label": "Paper"
+  },
+  {
+    "date": "Aug 2026",
+    "text": "Presenting transnasal electrical stimulation research at the NYC neuromodulation in New York City."
+  },
+  {
+    "date": "Nov 2024",
+    "text": "Selected for the 2024-25 Dowd Fellowship, which is one of the most prestigious Ph.D. fellowships at CMU. The Dowd Engineering Seed Fund supports four ambitious doctoral students.",
+    "url": "https://www.ece.cmu.edu/news-and-events/story/2025/01/dowd-fellows.html"
+  },
+  {
+    "date": "Jan 2024",
+    "text": "Featured in a mentoring video.",
+    "url": "https://www.youtube.com/watch?v=oFwq-5luD10"
+  },
+  {
+    "date": "June 2020",
+    "text": "A zebrafish EEG recording system was featured in Sicence codex",
+    "url": "https://www.sciencecodex.com/casting-wider-net-new-system-measures-brain-activity-several-zebrafish-concurrently-650638"
   }
 ]
