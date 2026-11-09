@@ -16,16 +16,19 @@
   {
     "date": "Nov 2024",
     "text": "Selected for the 2024-25 Dowd Fellowship, which is one of the most prestigious Ph.D. fellowships at CMU. The Dowd Engineering Seed Fund supports four ambitious doctoral students.",
-    "url": "https://www.ece.cmu.edu/news-and-events/story/2025/01/dowd-fellows.html"
+    "url": "https://www.ece.cmu.edu/news-and-events/story/2025/01/dowd-fellows.html",
+    "link_label": "Article"
   },
   {
     "date": "Jan 2024",
     "text": "Featured in a mentoring video.",
-    "url": "https://www.youtube.com/watch?v=oFwq-5luD10"
+    "url": "https://www.youtube.com/watch?v=oFwq-5luD10",
+    "link_label": "Video"
   },
   {
     "date": "June 2020",
     "text": "A zebrafish EEG recording system was featured in Sicence codex",
-    "url": "https://www.sciencecodex.com/casting-wider-net-new-system-measures-brain-activity-several-zebrafish-concurrently-650638"
+    "url": "https://www.sciencecodex.com/casting-wider-net-new-system-measures-brain-activity-several-zebrafish-concurrently-650638",
+    "link_label": "Article"
   }
 ]
